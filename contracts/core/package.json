@@ -1,3 +1,15 @@
 {
-  "name": "hardhat-project"
+  "name": "@ydc/contract-core",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "node": "pm2 start 'pnpm hardhat node' --name hardhat-node",
+    "build": "pnpm hardhat compile",
+    "test": "pnpm hardhat test",
+    "clean": "rimraf artifacts && rimraf cache"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

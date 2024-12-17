@@ -4,6 +4,8 @@ pragma solidity ^0.8.28;
 import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 import { Ownable2Step, Ownable } from "@openzeppelin/contracts/access/Ownable2Step.sol";
 import { ERC721URIStorage, ERC721 } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import { YDC_Token } from "./YDC_Token.sol";
+import { YDC_Course } from "./YDC_Course.sol";
 
 struct YDC_Item {
   address seller;
@@ -18,7 +20,13 @@ contract YDC_Market is ERC721URIStorage, Ownable2Step {
   uint256 private _nextTokenId;
   string private baseURI;
 
-  constructor() ERC721("YiDeng College Market Item", "YDCItem") Ownable(msg.sender) { }
+  address itemsOwner;
+  YDC_Token ydcToken;
+  YDC_Course ydcCourse;
+
+  constructor() ERC721("YiDeng College Market Item", "YDCItem") Ownable(msg.sender) {
+    itemsOwner = msg.sender;
+  }
 
   mapping(uint256 => uint64) public mapCourseId;
   mapping(uint256 => uint64) public mapCourseTypeId;
@@ -33,6 +41,18 @@ contract YDC_Market is ERC721URIStorage, Ownable2Step {
 
   function deliver(address user, uint64 courseId, uint64 courseTypeId) public onlyOwner returns (uint256) {
     return mint(user, courseId, courseTypeId);
+  }
+
+  function changeItemsOwner(address newAddress) public onlyOwner {
+    itemsOwner = newAddress;
+  }
+
+  function updateYDCTokenAddress() public onlyOwner {
+
+  }
+
+  function updateYDCCourseAddress() public onlyOwner {
+
   }
 
   // TODO: 之后还是使用结构体吧

@@ -6,7 +6,10 @@ import { Ownable2Step, Ownable } from "@openzeppelin/contracts/access/Ownable2St
 import { ERC721URIStorage, ERC721 } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
 contract YDC_Course is ERC721URIStorage, Ownable2Step {
+  using Strings for uint64;
+
   uint256 private _nextTokenId;
+  string private baseURI;
 
   constructor() ERC721("YiDeng College Course", "YDCCourse") Ownable(msg.sender) { }
 
@@ -23,5 +26,24 @@ contract YDC_Course is ERC721URIStorage, Ownable2Step {
 
   function deliver(address user, uint64 courseId, uint64 courseTypeId) public onlyOwner returns (uint256) {
     return mint(user, courseId, courseTypeId);
+  }
+
+  function _baseURI() internal view virtual override returns (string memory) {
+    return baseURI;
+  }
+
+  function setBaseURI(string memory newBaseURI) public onlyOwner {
+    baseURI = newBaseURI;
+  }
+
+  function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+    _requireOwned(tokenId);
+    return bytes(baseURI).length > 0 ? string.concat(
+      baseURI,
+      "?type=",
+      mapCourseTypeId[tokenId].toString(),
+      "&id=",
+      mapCourseId[tokenId].toString()
+    ) : "";
   }
 }

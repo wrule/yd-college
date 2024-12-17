@@ -47,12 +47,12 @@ contract YDC_Market is ERC721URIStorage, Ownable2Step {
     itemsOwner = newAddress;
   }
 
-  function updateYDCTokenAddress() public onlyOwner {
-
+  function updateYDCTokenAddress(address newAddress) public onlyOwner {
+    ydcToken = YDC_Token(newAddress);
   }
 
-  function updateYDCCourseAddress() public onlyOwner {
-
+  function updateYDCCourseAddress(address newAddress) public onlyOwner {
+    ydcCourse = YDC_Course(newAddress);
   }
 
   // TODO: 之后还是使用结构体吧

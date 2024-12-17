@@ -12,4 +12,8 @@ contract YDC_Token is ERC20, Ownable2Step {
   function mintFor(address user, uint256 amount) public {
     _mint(user, amount);
   }
+
+  function decimals() public view virtual override returns (uint8) {
+    return 0;
+  }
 }

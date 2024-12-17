@@ -28,19 +28,23 @@ contract YDC_Market is ERC721URIStorage, Ownable2Step {
     itemsOwner = msg.sender;
   }
 
-  mapping(uint256 => uint64) public mapCourseId;
-  mapping(uint256 => uint64) public mapCourseTypeId;
+  mapping(uint256 => YDC_Item) public mapItem;
 
-  function mint(address user, uint64 courseId, uint64 courseTypeId) private returns (uint256) {
+  function listItem(
+    address user,
+    uint64 courseId,
+    uint64 courseTypeId,
+    uint256 price
+  ) public onlyOwner returns (uint256) {
     uint256 tokenId = _nextTokenId++;
     _mint(user, tokenId);
-    mapCourseId[tokenId] = courseId;
-    mapCourseTypeId[tokenId] = courseTypeId;
+    mapItem[tokenId] = YDC_Item({
+      seller: _msgSender(),
+      courseId: courseId,
+      courseTypeId: courseTypeId,
+      price: price
+    });
     return tokenId;
-  }
-
-  function deliver(address user, uint64 courseId, uint64 courseTypeId) public onlyOwner returns (uint256) {
-    return mint(user, courseId, courseTypeId);
   }
 
   function changeItemsOwner(address newAddress) public onlyOwner {
@@ -55,10 +59,9 @@ contract YDC_Market is ERC721URIStorage, Ownable2Step {
     ydcCourse = YDC_Course(newAddress);
   }
 
-  // TODO: 之后还是使用结构体吧
-  function queryCourseInfo(uint256 tokenId) public view returns (uint64) {
+  function queryCourseInfo(uint256 tokenId) public view returns (YDC_Item memory) {
     _requireOwned(tokenId);
-    return mapCourseId[tokenId];
+    return mapItem[tokenId];
   }
 
   function _baseURI() internal view virtual override returns (string memory) {
@@ -74,9 +77,9 @@ contract YDC_Market is ERC721URIStorage, Ownable2Step {
     return bytes(baseURI).length > 0 ? string.concat(
       baseURI,
       "?type=",
-      mapCourseTypeId[tokenId].toString(),
+      mapItem[tokenId].courseId.toString(),
       "&id=",
-      mapCourseId[tokenId].toString()
+      mapItem[tokenId].courseTypeId.toString()
     ) : "";
   }
 }

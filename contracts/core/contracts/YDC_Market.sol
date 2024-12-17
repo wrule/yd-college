@@ -24,8 +24,8 @@ contract YDC_Market is ERC721URIStorage, Ownable2Step {
   YDC_Token ydcToken;
   YDC_Course ydcCourse;
 
-  constructor() ERC721("YiDeng College Market Item", "YDCItem") Ownable(msg.sender) {
-    itemsOwner = msg.sender;
+  constructor() ERC721("YiDeng College Market Item", "YDCItem") Ownable(_msgSender()) {
+    itemsOwner = _msgSender();
   }
 
   mapping(uint256 => YDC_Item) public mapItem;

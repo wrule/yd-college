@@ -7,7 +7,9 @@ import { ERC20Votes, ERC20 } from "@openzeppelin/contracts/token/ERC20/extension
 // 1000000000000000000 1YD
 
 contract YDC_Token is ERC20, Ownable2Step {
-  constructor() ERC20("YiDeng College Token", "YD") Ownable(msg.sender) {
-    _mint(msg.sender, 100_000_000 * (10 ** decimals()));
+  constructor() ERC20("YiDeng College Token", "YD") Ownable(msg.sender) { }
+
+  function mintFor(address user, uint256 amount) public {
+    _mint(user, amount);
   }
 }

@@ -28,6 +28,7 @@ contract YDC_Course is ERC721URIStorage, Ownable2Step {
     return mint(user, courseId, courseTypeId);
   }
 
+  // TODO: 之后还是使用结构体吧
   function queryCourseInfo(uint256 tokenId) public view returns (uint64) {
     _requireOwned(tokenId);
     return mapCourseId[tokenId];

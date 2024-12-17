@@ -1,0 +1,31 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Global settings
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+# Markdown files - special handling for trailing whitespace
+[*.md]
+trim_trailing_whitespace = false
+
+# Ignore some files
+[{dist,build,coverage}/**]
+charset = unset
+end_of_line = unset
+insert_final_newline = unset
+trim_trailing_whitespace = unset
+indent_style = unset
+indent_size = unset
+
+# Minified files
+[**.min.*]
+indent_style = unset
+indent_size = unset

@@ -3,6 +3,18 @@ import '@nomicfoundation/hardhat-toolbox-viem';
 import { HDNodeWallet } from 'ethers';
 import { parseEther } from 'viem';
 
+const exposedGet = (varName: string, defaultValue?: string) => {
+  return '';
+};
+
+const varsGet = (varName: string, defaultValue?: string) => {
+  if (true) {
+    return vars.get(varName, defaultValue);
+  } else {
+    return exposedGet(varName, defaultValue);
+  }
+};
+
 const TEST_MNEMONIC = vars.get('TEST_MNEMONIC');
 const ALCHEMY_API_KEY = vars.get('ALCHEMY_API_KEY');
 const ETHERSCAN_API_KEY = vars.get('ETHERSCAN_API_KEY');

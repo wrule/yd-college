@@ -9,4 +9,15 @@ contract YDC_Course is ERC721URIStorage, Ownable2Step {
   uint256 private _nextTokenId;
 
   constructor() ERC721("YiDeng College Course", "YDCCourse") Ownable(msg.sender) { }
+
+  mapping(uint256 => uint64) mapCourseId;
+  mapping(uint256 => uint64) mapCourseTypeId;
+
+  function mint(address user, uint64 courseId, uint64 courseTypeId) private returns (uint256) {
+    uint256 tokenId = _nextTokenId++;
+    _mint(user, tokenId);
+    mapCourseId[tokenId] = courseId;
+    mapCourseTypeId[tokenId] = courseTypeId;
+    return tokenId;
+  }
 }

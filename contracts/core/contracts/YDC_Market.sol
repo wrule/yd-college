@@ -31,13 +31,12 @@ contract YDC_Market is ERC721URIStorage, Ownable2Step {
   mapping(uint256 => YDC_Item) public mapItem;
 
   function listItem(
-    address user,
     uint64 courseId,
     uint64 courseTypeId,
     uint256 price
   ) public onlyOwner returns (uint256) {
     uint256 tokenId = _nextTokenId++;
-    _mint(user, tokenId);
+    _mint(itemsOwner, tokenId);
     mapItem[tokenId] = YDC_Item({
       seller: _msgSender(),
       courseId: courseId,

@@ -29,6 +29,7 @@ contract YDC_Market is ERC721URIStorage, Ownable2Step {
   }
 
   mapping(uint256 => YDC_Item) public mapItem;
+  mapping(uint64 => uint256) public mapTokenId;
 
   function listItem(
     uint64 courseId,
@@ -43,6 +44,7 @@ contract YDC_Market is ERC721URIStorage, Ownable2Step {
       courseTypeId: courseTypeId,
       price: price
     });
+    mapTokenId[courseId] = tokenId;
     return tokenId;
   }
 

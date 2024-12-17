@@ -15,9 +15,9 @@ const varsGet = (varName: string, defaultValue?: string) => {
   }
 };
 
-const TEST_MNEMONIC = vars.get('TEST_MNEMONIC');
-const ALCHEMY_API_KEY = vars.get('ALCHEMY_API_KEY');
-const ETHERSCAN_API_KEY = vars.get('ETHERSCAN_API_KEY');
+const TEST_MNEMONIC = varsGet('TEST_MNEMONIC');
+const ALCHEMY_API_KEY = varsGet('ALCHEMY_API_KEY');
+const ETHERSCAN_API_KEY = varsGet('ETHERSCAN_API_KEY');
 
 function getWalletFromMnemonic(mnemonic: string, index: number = 0) {
   const path = `m/44'/60'/0'/0/${index}`;

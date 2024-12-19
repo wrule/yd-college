@@ -7,6 +7,7 @@
     "node": "pm2 start 'pnpm hardhat node' --name hardhat-node",
     "build": "pnpm hardhat compile",
     "test": "pnpm hardhat test",
+    "verify": "pnpm hardhat ignition verify --include-unrelated-contracts",
     "clean": "rimraf artifacts && rimraf cache"
   },
   "keywords": [],

@@ -31,6 +31,10 @@ contract YDC_Market is ERC721URIStorage, Ownable2Step {
   mapping(uint256 => YDC_Item) public mapItem;
   mapping(uint64 => uint256) public mapTokenId;
 
+  function acceptOwnership_YDC_Course() public {
+    ydcCourse.acceptOwnership();
+  }
+
   function listItem(
     uint64 courseId,
     uint64 courseTypeId,

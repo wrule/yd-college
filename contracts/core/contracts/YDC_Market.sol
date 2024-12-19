@@ -52,7 +52,8 @@ contract YDC_Market is ERC721URIStorage, Ownable2Step {
     uint256 tokenId = mapTokenId[courseId];
     _requireOwned(tokenId);
     YDC_Item memory itemInfo = queryCourseInfo(tokenId);
-    ydcToken.transferFrom(_msgSender(), itemInfo.seller, itemInfo.price);
+    ydcToken.transferFrom(_msgSender(), address(this), itemInfo.price);
+    ydcToken.transfer(itemInfo.seller, itemInfo.price);
     ydcCourse.deliver(_msgSender(), itemInfo.courseId, itemInfo.courseTypeId);
   }
 

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.28;
 
-import { Ownable2Step, Ownable } from "@openzeppelin/contracts/access/Ownable2Step.sol";
+import { YDC_Base } from "./YDC_Base.sol";
 
-contract YDC_Router is Ownable2Step {
-  constructor() Ownable(_msgSender()) { }
+contract YDC_Router is YDC_Base {
+  constructor() YDC_Base() { }
 
   mapping(string => address) private mapAddress;
 

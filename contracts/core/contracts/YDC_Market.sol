@@ -36,7 +36,7 @@ contract YDC_Market is ERC721URIStorage, Ownable2Step {
     uint64 courseTypeId,
     uint256 price
   ) public onlyOwner returns (uint256) {
-    uint256 tokenId = _nextTokenId++;
+    uint256 tokenId = ++_nextTokenId;
     _mint(itemsOwner, tokenId);
     mapItem[tokenId] = YDC_Item({
       seller: _msgSender(),

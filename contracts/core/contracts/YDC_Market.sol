@@ -56,7 +56,7 @@ contract YDC_Market is ERC721URIStorage, Ownable2Step {
     ydcCourse.deliver(_msgSender(), itemInfo.courseId, itemInfo.courseTypeId);
   }
 
-  function changeItemsOwner(address newAddress) public onlyOwner {
+  function updateItemsOwner(address newAddress) public onlyOwner {
     itemsOwner = newAddress;
   }
 

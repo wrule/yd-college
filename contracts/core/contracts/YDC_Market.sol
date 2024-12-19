@@ -17,8 +17,8 @@ struct YDC_Item {
 contract YDC_Market is ERC721URIStorage, Ownable2Step {
   using Strings for uint64;
 
-  uint256 private _nextTokenId;
-  string private baseURI;
+  uint256 public _nextTokenId;
+  string public baseURI;
 
   address public itemsOwner;
   YDC_Token public ydcToken;
@@ -52,8 +52,8 @@ contract YDC_Market is ERC721URIStorage, Ownable2Step {
     uint256 tokenId = mapTokenId[courseId];
     _requireOwned(tokenId);
     YDC_Item memory itemInfo = queryCourseInfo(tokenId);
-    // ydcToken.transferFrom(_msgSender(), address(this), itemInfo.price);
-    // ydcToken.transfer(itemInfo.seller, itemInfo.price);
+    ydcToken.transferFrom(_msgSender(), address(this), itemInfo.price);
+    ydcToken.transfer(itemInfo.seller, itemInfo.price);
     ydcCourse.deliver(_msgSender(), itemInfo.courseId, itemInfo.courseTypeId);
   }
 

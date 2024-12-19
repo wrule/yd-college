@@ -2,8 +2,8 @@
 pragma solidity ^0.8.28;
 
 import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
-import { Ownable2Step, Ownable } from "@openzeppelin/contracts/access/Ownable2Step.sol";
 import { ERC721URIStorage, ERC721 } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import { YDC_Base } from "./YDC_Base.sol";
 import { YDC_Token } from "./YDC_Token.sol";
 import { YDC_Course } from "./YDC_Course.sol";
 
@@ -14,7 +14,7 @@ struct YDC_Item {
   uint256 price;
 }
 
-contract YDC_Market is ERC721URIStorage, Ownable2Step {
+contract YDC_Market is YDC_Base, ERC721URIStorage {
   using Strings for uint64;
 
   uint256 public _nextTokenId;
@@ -24,7 +24,7 @@ contract YDC_Market is ERC721URIStorage, Ownable2Step {
   YDC_Token public ydcToken;
   YDC_Course public ydcCourse;
 
-  constructor() ERC721("YiDeng College Market Item", "YDCItem") Ownable(_msgSender()) {
+  constructor() YDC_Base() ERC721("YiDeng College Market Item", "YDCItem") {
     itemsOwner = _msgSender();
   }
 

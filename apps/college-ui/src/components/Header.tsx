@@ -2,7 +2,7 @@
 
 const Header = () => {
   return (
-    <header className="fixed top-0 left-0 right-0 flex items-center justify-between px-8 py-4">
+    <header className="fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-8">
       <nav>
         <ul className="flex items-center gap-8">
           <li className="relative group">

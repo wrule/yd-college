@@ -7,11 +7,11 @@ const Header = () => {
   const pathname = usePathname();
 
   const navItems = [
-    { name: 'Post', path: '/post' },
-    { name: 'College', path: '/college' },
-    { name: 'Swap', path: '/swap' },
-    { name: 'Stack', path: '/stack' },
-    { name: 'Parliament', path: '/dao' },
+    { name: 'Post', path: '/app/post' },
+    { name: 'College', path: '/app/college' },
+    { name: 'Swap', path: '/app/swap' },
+    { name: 'Stack', path: '/app/stack' },
+    { name: 'Parliament', path: '/app/dao' },
   ];
 
   return (

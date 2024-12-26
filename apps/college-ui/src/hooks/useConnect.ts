@@ -1,5 +1,5 @@
 
-import { ethers } from 'ethers';
+import { ethers, formatEther } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { metaMaskHooks } from '@/connectors/metaMask';
@@ -14,7 +14,7 @@ const useBalance = (address: string) => {
 
   const balanceText = useMemo(() => {
     if (balance) {
-      return Number(Number(ethers.utils.formatEther(balance.toBigInt())).toFixed(4)).toString();
+      return Number(Number(formatEther(balance.toBigInt())).toFixed(4)).toString();
     }
     return '';
   }, [balance]);

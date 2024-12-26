@@ -10,6 +10,7 @@ const Header = () => {
     { name: 'College', path: '/college' },
     { name: 'Swap', path: '/swap' },
     { name: 'Stack', path: '/stack' },
+    { name: 'Parliament', path: '/dao' },
   ];
 
   return (

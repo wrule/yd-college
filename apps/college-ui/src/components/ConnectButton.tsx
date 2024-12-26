@@ -1,61 +1,55 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import useConnect from '@/hooks/useConnect';
-import { truncateAddress } from '@/utils/format'; // 需要创建这个工具函数
+
+const truncateAddress = (address: string) => {
+  if (!address) return '';
+  return `${address.slice(0, 4)}...${address.slice(-4)}`;
+};
 
 const ConnectButton = () => {
-  const {
-    connector,
-    isActive,
-    account,
-    balanceText,
-    isLoading,
-  } = useConnect();
-
-  const chainId = 1; // 这里需要获取当前网络ID
-
+  const { connector, isActive, account, balanceText, isLoading } = useConnect();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied'>('idle');
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
-  // 处理链接钱包
-  const handleConnect = async () => {
-    try {
-      await connector.activate();
-    } catch (error) {
-      console.error('Failed to connect:', error);
-      // 这里可以添加错误提示toast
-    }
-  };
-
-  // 处理断开连接
-  const handleDisconnect = async () => {
-    try {
-      if (connector?.deactivate) {
-        await connector.deactivate();
+  // 处理点击外部关闭下拉菜单
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        buttonRef.current &&
+        !dropdownRef.current.contains(event.target as Node) &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
       }
-      setIsDropdownOpen(false);
-    } catch (error) {
-      console.error('Failed to disconnect:', error);
-    }
-  };
+    };
 
-  // 复制地址到剪贴板
-  const copyAddress = async () => {
-    if (account) {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleCopyAddress = async () => {
+    if (!account) return;
+    try {
       await navigator.clipboard.writeText(account);
-      // 这里可以添加复制成功提示toast
+      setCopyStatus('copied');
+      setTimeout(() => setCopyStatus('idle'), 3000);
+    } catch (error) {
+      console.error('Failed to copy:', error);
     }
   };
 
-  // 在区块浏览器中查看
-  const viewOnExplorer = () => {
-    // const explorerUrl = getExplorerUrl(chainId, account); // 需要创建这个工具函数
-    // window.open(explorerUrl, '_blank');
-  };
+  const buttonClasses = "h-9 rounded-full bg-gray-800 text-white font-medium shadow-md transition-all duration-200 ease-out";
 
   if (isLoading) {
     return (
-      <button className="px-6 py-[0.5rem] rounded-full bg-gray-800 text-white font-medium shadow-md
-        animate-pulse cursor-wait">
+      <button
+        className={`${buttonClasses} px-6 animate-pulse cursor-wait`}
+      >
         Connecting...
       </button>
     );
@@ -65,74 +59,74 @@ const ConnectButton = () => {
     return (
       <div className="relative">
         <button
+          ref={buttonRef}
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="flex items-center gap-2 px-4 py-[0.5rem] rounded-full bg-yblue-500 text-white font-medium
-            hover:bg-yblue-600 transition-all duration-200 ease-out"
+          className={`${buttonClasses} flex items-center gap-3 px-4 hover:bg-gray-700 hover:shadow-lg active:bg-gray-900`}
         >
-          {/* 网络指示器 */}
+          <span className="text-sm text-gray-300">{balanceText} ETH</span>
+          <div className="w-[1px] h-4 bg-gray-600"></div>
           <div className="flex items-center gap-2">
-            <div className={`w-2 h-2 rounded-full ${
-              chainId === 1 ? 'bg-green-400' : 'bg-yellow-400'
-            }`} />
-            <span className="text-sm hidden sm:inline">
-              {chainId === 1 ? 'Ethereum' : 'Unknown Network'}
-            </span>
-          </div>
-
-          {/* 余额显示 */}
-          <div className="px-2 py-1 bg-yblue-600 rounded-full text-sm">
-            {balanceText} ETH
-          </div>
-
-          {/* 地址显示 */}
-          <div className="flex items-center gap-2">
-            <span>{truncateAddress(account)}</span>
-            <svg className={`w-4 h-4 transition-transform duration-200 ${
-              isDropdownOpen ? 'rotate-180' : ''
-            }`}
-              fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <span className="text-sm">{truncateAddress(account)}</span>
+            <svg
+              className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </div>
         </button>
 
-        {/* 下拉菜单 */}
         {isDropdownOpen && (
           <div
             ref={dropdownRef}
-            className="absolute right-0 mt-2 w-72 rounded-xl bg-white shadow-xl border border-gray-100
-              divide-y divide-gray-100"
+            className="absolute right-0 mt-2 w-64 rounded-xl bg-white shadow-xl border border-gray-100
+              divide-y divide-gray-100 transform origin-top-right transition-all duration-200 z-50"
           >
-            {/* 账户信息部分 */}
             <div className="p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700">Account</span>
-                <span className="text-sm text-gray-500">{truncateAddress(account)}</span>
+              <div className="mb-3">
+                <div className="text-sm font-medium text-gray-500 mb-1">Connected Account</div>
+                <div className="text-gray-900 font-medium text-sm break-all">
+                  {account}
+                </div>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700">Balance</span>
-                <span className="text-sm text-gray-500">{balanceText} ETH</span>
+              <div>
+                <div className="text-sm font-medium text-gray-500 mb-1">Balance</div>
+                <div className="text-gray-900 font-medium">{balanceText} ETH</div>
               </div>
             </div>
 
-            {/* 操作按钮部分 */}
             <div className="p-2">
               <button
-                onClick={copyAddress}
-                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg
-                  flex items-center gap-2"
+                onClick={handleCopyAddress}
+                className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 rounded-lg
+                  flex items-center gap-2 transition-colors duration-150"
+                style={{ color: copyStatus === 'copied' ? '#10B981' : '#374151' }}
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
-                Copy Address
+                {copyStatus === 'copied' ? (
+                  <>
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M5 13l4 4L19 7" />
+                    </svg>
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    Copy Address
+                  </>
+                )}
               </button>
 
               <button
-                onClick={viewOnExplorer}
-                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg
-                  flex items-center gap-2"
+                onClick={() => window.open(`https://etherscan.io/address/${account}`, '_blank')}
+                className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg
+                  flex items-center gap-2 transition-colors duration-150"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -142,9 +136,9 @@ const ConnectButton = () => {
               </button>
 
               <button
-                onClick={handleDisconnect}
-                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg
-                  flex items-center gap-2"
+                onClick={() => connector?.deactivate?.()}
+                className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg
+                  flex items-center gap-2 transition-colors duration-150"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -161,11 +155,8 @@ const ConnectButton = () => {
 
   return (
     <button
-      className="px-6 py-[0.5rem] rounded-full bg-yblue-500 text-white font-medium shadow-md
-        hover:bg-yblue-600 hover:shadow-lg hover:scale-105
-        active:scale-95 active:bg-yblue-700
-        transition-all duration-200 ease-out"
-      onClick={handleConnect}
+      className={`${buttonClasses} px-6 hover:bg-gray-700 hover:shadow-lg hover:scale-105 active:scale-95 active:bg-gray-900`}
+      onClick={() => connector.activate()}
     >
       Connect Wallet
     </button>

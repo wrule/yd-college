@@ -5,6 +5,11 @@ import { Connector } from '@web3-react/types';
 import Header from '@/components/Header';
 import { metaMask, metaMaskHooks } from '@/connectors/metaMask';
 
+// 扩展 BigInt 的序列化
+(BigInt.prototype as any).toJSON = function() {
+  return this.toString();
+};
+
 const connectors: [Connector, Web3ReactHooks][] = [
   [metaMask, metaMaskHooks],
 ];

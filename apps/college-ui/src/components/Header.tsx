@@ -15,7 +15,7 @@ const Header = () => {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-8">
+    <header className="bg-primary-200 z-10 fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-8">
       <div className="flex items-center gap-12">
         <Link href="/">
           <h1 className="text-[2.2rem] cursor-pointer hover:scale-110 transition-transform duration-200">🏮</h1>

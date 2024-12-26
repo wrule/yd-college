@@ -4,7 +4,6 @@ import { BrowserProvider, Contract, Eip1193Provider } from 'ethers';
 import { YDC_Post } from '@/typechain-types';
 import YDC_Post_JSON from '@/contracts/abi/YDC_Post.sol/YDC_Post.json';
 
-// 定义合约返回的结构体数组中每个元素的类型
 interface IPost {
   postId: string;
   sender: string;
@@ -18,10 +17,11 @@ interface IPost {
   commentTail: string;
 }
 
-const useContractPost = (postId: string) => {
+const useContractPost = (initialPostId: string) => {
   const { provider, account } = useWeb3React();
   const [loading, setLoading] = useState<boolean>(true);
   const [postList, setPostList] = useState<IPost[]>([]);
+  const [currentPostId, setCurrentPostId] = useState(initialPostId);
 
   const ethersProvider = new BrowserProvider(window.ethereum! as Eip1193Provider);
 
@@ -35,18 +35,17 @@ const useContractPost = (postId: string) => {
   }, [provider, account]);
 
   const convertToPost = (postArray: any[]): IPost => {
-    // 按照合约结构体定义的顺序转换
     return {
-      postId: postArray[0].toString(),        // uint256 postId
-      sender: postArray[1],                   // address sender
-      content: postArray[2],                  // string content
-      likeCount: Number(postArray[3]),        // uint256 likeCount
-      unlikeCount: Number(postArray[4]),      // uint256 unlikeCount
-      createdAt: Number(postArray[5]),        // uint256 createdAt
-      prev: postArray[6].toString(),          // uint256 prev
-      next: postArray[7].toString(),          // uint256 next
-      commentHead: postArray[8].toString(),   // uint256 commentHead
-      commentTail: postArray[9].toString(),   // uint256 commentTail
+      postId: postArray[0].toString(),
+      sender: postArray[1],
+      content: postArray[2],
+      likeCount: Number(postArray[3]),
+      unlikeCount: Number(postArray[4]),
+      createdAt: Number(postArray[5]),
+      prev: postArray[6].toString(),
+      next: postArray[7].toString(),
+      commentHead: postArray[8].toString(),
+      commentTail: postArray[9].toString(),
     };
   };
 
@@ -75,9 +74,14 @@ const useContractPost = (postId: string) => {
       const tx = await contractWithSigner.post(content, commentFor);
 
       // 等待交易确认
-      await tx.wait();
+      const receipt = await tx.wait();
 
-      // 发帖成功后刷新列表
+      // 从事件中获取新的 postId
+      const postEvent = receipt.logs[0];  // 假设第一个事件是 Post 事件
+      const postId = postEvent.topics[1];  // 假设 postId 在第二个 topic 中
+
+      // 更新当前 postId 并刷新列表
+      setCurrentPostId(postId);
       await updatePostList(postId);
 
       return tx;
@@ -88,13 +92,14 @@ const useContractPost = (postId: string) => {
   };
 
   useEffect(() => {
-    updatePostList(postId);
-  }, [contract, postId]);
+    updatePostList(currentPostId);
+  }, [currentPostId, contract]);
 
   return {
     loading,
     postList,
-    createPost  // 导出 createPost 方法
+    createPost,
+    currentPostId  // 导出当前 postId
   };
 };
 

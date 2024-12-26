@@ -64,11 +64,38 @@ const useContractPost = (postId: string) => {
     }
   }, [contract]);
 
+  const createPost = async (content: string, commentFor: string = "0") => {
+    if (!contract || !account) return null;
+
+    try {
+      const signer = await ethersProvider.getSigner();
+      const contractWithSigner = contract.connect(signer);
+
+      // 发送交易
+      const tx = await contractWithSigner.post(content, commentFor);
+
+      // 等待交易确认
+      await tx.wait();
+
+      // 发帖成功后刷新列表
+      await updatePostList(postId);
+
+      return tx;
+    } catch (error) {
+      console.error('Create post error:', error);
+      throw error;
+    }
+  };
+
   useEffect(() => {
     updatePostList(postId);
   }, [contract, postId]);
 
-  return { loading, postList };
+  return {
+    loading,
+    postList,
+    createPost  // 导出 createPost 方法
+  };
 };
 
 export default useContractPost;

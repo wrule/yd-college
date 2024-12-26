@@ -1,12 +1,29 @@
 'use client';
 
 import useContractPost from "@/contracts/useContractPost";
+import { useState } from "react";
 
 const PostPage = () => {
-  const { loading, postList } = useContractPost('22');
+  const { loading, postList, createPost } = useContractPost('27');
+  const [content, setContent] = useState('');
+  const [posting, setPosting] = useState(false);
 
   const getShortAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  };
+
+  const handlePost = async () => {
+    if (!content.trim() || posting) return;
+
+    try {
+      setPosting(true);
+      await createPost(content);
+      setContent(''); // 发帖成功后清空输入
+    } catch (error) {
+      console.error('发帖失败:', error);
+    } finally {
+      setPosting(false);
+    }
   };
 
   return (
@@ -14,13 +31,22 @@ const PostPage = () => {
       {/* 发帖区域 */}
       <div className="bg-[#295DF4]/95 rounded-2xl p-6 mb-8 shadow-lg backdrop-blur-sm">
         <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
           className="w-full h-24 bg-white/10 rounded-xl p-4 text-white placeholder-white/70 resize-none outline-none transition-all duration-200 focus:bg-white/20 text-sm"
           placeholder="Share your Web3 development experience..."
+          disabled={posting}
         />
         <div className="flex justify-end mt-3">
-          <button className="px-8 py-2.5 bg-white text-[#295DF4] rounded-full font-semibold
-            hover:bg-opacity-90 transition-all duration-200 active:scale-95 text-sm">
-            Post
+          <button
+            onClick={handlePost}
+            disabled={!content.trim() || posting}
+            className="px-8 py-2.5 bg-white text-[#295DF4] rounded-full font-semibold
+              hover:bg-opacity-90 transition-all duration-200 active:scale-95 text-sm
+              disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white
+              disabled:active:scale-100"
+          >
+            {posting ? 'Posting...' : 'Post'}
           </button>
         </div>
       </div>
@@ -42,7 +68,7 @@ const PostPage = () => {
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold text-gray-800">{getShortAddress(post.sender)}</h3>
                     <span className="text-gray-400 text-sm">
-                      {/* {formatDistanceToNow(post.createdAt * 1000, { addSuffix: true })} */}
+                      {new Date(post.createdAt * 1000).toLocaleString()}
                     </span>
                   </div>
                   <p className="mt-2 text-gray-600 text-sm leading-relaxed">

@@ -1,11 +1,13 @@
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { Contract } from 'ethers';
 import { YDC_Post } from '@/typechain-types';
 import YDC_Post_JSON from '@/contracts/abi/YDC_Post.sol/YDC_Post.json';
 
-const useContractPost = () => {
+const useContractPost = (postId: string) => {
   const { provider, account } = useWeb3React();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [postList, setPostList] = useState<any>([]);
 
   const contract = useMemo(() => {
     if (!provider) return null;
@@ -15,7 +17,24 @@ const useContractPost = () => {
     ) as unknown as YDC_Post;
   }, [provider, account]);
 
-  return [];
+  const updatePostList = useCallback(async (postId: string) => {
+    if (contract && postId) {
+      setLoading(true);
+      try {
+        const res = await contract.flow(postId, true);
+        setPostList(res);
+      } catch (error) {
+        console.error(error);
+      }
+      setLoading(false);
+    }
+  }, [contract, setPostList]);
+
+  useEffect(() => {
+    updatePostList(postId);
+  }, [contract, postId]);
+
+  return { loading, postList };
 };
 
 export default useContractPost;

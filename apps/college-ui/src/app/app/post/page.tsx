@@ -1,6 +1,13 @@
+'use client';
+
+import useContractPost from "@/contracts/useContractPost";
+
 const PostPage = () => {
+  const a = useContractPost('22');
+
   return (
     <div className="max-w-3xl mx-auto p-6 pt-20">
+      <div>{JSON.stringify(a)}</div>
       {/* 发帖区域 */}
       <div className="bg-[#295DF4]/95 rounded-2xl p-6 mb-8 shadow-lg backdrop-blur-sm">
         <textarea
